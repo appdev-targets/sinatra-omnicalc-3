@@ -10,7 +10,6 @@ get("/") do
   "Welcome to Omnicalc 3"
 end
 
-
 get("/umbrella") do
   erb(:umbrella_form)
 end
@@ -31,14 +30,14 @@ post("/process_umbrella") do
   @latitude = loc_hash.fetch("lat")
   @longitude = loc_hash.fetch("lng")
 
-  pirate_weather_url = "https://api.pirateweather.net/forecast/#{ENV.fetch("PIRATE_API_KEY"}/#{@latitude},#{@longitude}"
+  pirate_weather_url = "https://api.pirateweather.net/forecast/#{ENV.fetch("PIRATE_API_KEY")}/#{@latitude},#{@longitude}"
 
   pirate_raw_response = HTTP.get(pirate_weather_url).to_s
 
   pirate_parsed_response = JSON.parse(pirate_raw_response)
 
   currently_hash = pirate_parsed_response.fetch("currently")
-  
+
   @current_temp = currently_hash.fetch("temperature")
 
   @current_summary = currently_hash.fetch("summary")
@@ -92,10 +91,10 @@ post("/process_single_message") do
       model: "gpt-4",
       messages: [
         { :role => "system", :content => "You are a helpful assistant that talks like Shakespeare." },
-        { :role => "user", :content => @user_message }
+        { :role => "user", :content => @user_message },
       ],
       temperature: 0.7,
-    }
+    },
   )
 
   choices_array = api_response.fetch("choices")
@@ -133,15 +132,15 @@ post("/add_message_to_chat") do
   chat_history_array.push(
     { :role => "user", :content => new_message }
   )
-  
+
   openai_client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
 
   response = openai_client.chat(
     parameters: {
-        model: "gpt-4",
-        messages: chat_history_array,
-        temperature: 0.7,
-    }
+      model: "gpt-4",
+      messages: chat_history_array,
+      temperature: 0.7,
+    },
   )
 
   choices_array = response.fetch("choices")
@@ -150,7 +149,7 @@ post("/add_message_to_chat") do
   new_ai_reply = message_hash.fetch("content")
 
   chat_history_array.push(
-    { :role => "assistant", :content => new_ai_reply}
+    { :role => "assistant", :content => new_ai_reply }
   )
 
   new_chat_history_string = JSON.generate(chat_history_array)
