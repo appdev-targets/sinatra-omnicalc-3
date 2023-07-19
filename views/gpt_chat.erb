@@ -1,0 +1,21 @@
+<dl>
+  <% @chat_history_array.each do |message_hash| %>
+    <% the_content = message_hash.fetch("content") %>
+    <dt><%= message_hash.fetch("role") %></dt>
+    <dd><%= Kramdown::Document.new(the_content).to_html %></dd>
+  <% end %>
+</dl>
+
+<form action="/add_message_to_chat" method="post">
+  <label for="new_message_field">You:</label>
+  
+  <input id="new_message" type="text" name="user_message" placeholder="Enter a message....">
+
+  <button>Send</button>
+</form>
+
+<hr>
+
+<form action="/clear_chat" method="post">
+  <button>Clear chat history</button>
+</form>
